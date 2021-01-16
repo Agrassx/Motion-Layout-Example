@@ -37,76 +37,21 @@ class PlayerFragment : Fragment() {
 
         playerMotionLayout = view.findViewById(R.id.playerMotionLayout)
 
-        val activityMotionLayout =  (activity as MainActivity).motionLayout
-
-        activityMotionLayout.apply {
-            setTransitionListener(
-                object : MotionLayout.TransitionListener {
-                    override fun onTransitionChange(
-                        motionLayout: MotionLayout?,
-                        startId: Int,
-                        endId: Int,
-                        progress: Float
-                    ) {
-                        playerMotionLayout.also {
-                            it.progress = abs(progress)
-                        }
-                    }
-
-                    override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-
-                    }
-
-                    override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
-                    }
-
-                    override fun onTransitionTrigger(
-                        p0: MotionLayout?,
-                        p1: Int,
-                        p2: Boolean,
-                        p3: Float
-                    ) {
-
-                        Log.e("ActivityMotionLayout", "$p1, $p2, $p3")
-
-                    }
-                }
-            )
-
-            setOnTouchListener { view, motionEvent ->
-                if (motionEvent.action == ACTION_UP) {
-                    view.performClick()
-                }
-
-                activityMotionLayout.onTouchEvent(motionEvent)
-                Log.e("activityMotionLayout", "onTouch")
-                return@setOnTouchListener true
-            }
-        }
-
         view.findViewById<CardView>(R.id.coverCard).setOnClickListener {
             Toast.makeText(requireContext(), "Ko-ko-ko", Toast.LENGTH_LONG).show()
         }
 
-        view.findViewById<Toolbar>(R.id.toolbar).apply {
-            setOnTouchListener { view, motionEvent ->
+        view.apply {
+            setOnTouchListener { toolbar, motionEvent ->
                 if (motionEvent.action == ACTION_UP) {
-                    view.performClick()
+                    toolbar.performClick()
                 }
 
-                activityMotionLayout.onTouchEvent(motionEvent)
+                (view.parent.parent as ViewGroup).onTouchEvent(motionEvent)
+
                 Log.e("Toolbar", "onTouch")
                 return@setOnTouchListener true
             }
-
-            setOnClickListener {
-                if (playerMotionLayout.currentState == R.id.fullState) {
-                    activityMotionLayout.transitionToStart()
-                } else {
-                    activityMotionLayout.transitionToEnd()
-                }
-            }
-
         }
     }
 
